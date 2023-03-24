@@ -1,6 +1,17 @@
-# nome do titular, numero da conta, cpf, saldo, limite disponivel
-#
-# extrato, deposito, saque, transferencia - pix,
+"""
+Proximos passos:
+- Fazer busca sobre o cliente pelo CPF
+- Fazer busca pelo cliente pelo número da conta
+- Retornar CPF formatado
+- Adicionar sistema de data no extrato
+- Criar conta poupança onde rende um valor a cada x tempo
+- Utilizar o dot env para algo só para praticar
+- Criar sistema de senha da conta
+- Menu interativo para acesso
+
+"""
+
+
 class ContaCorrente:
     def __init__(self, nome, numero, cpf, saldo, limite):  # Atributos do objeto
         self.__nome = nome
