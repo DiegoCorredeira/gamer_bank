@@ -1,8 +1,6 @@
 # nome do titular, numero da conta, cpf, saldo, limite disponivel
 #
 # extrato, deposito, saque, transferencia - pix,
-
-
 class ContaCorrente:
     def __init__(self, nome, numero, cpf, saldo, limite):  # Atributos do objeto
         self.__nome = nome
@@ -36,18 +34,11 @@ class ContaCorrente:
         else:
             return 'Valor indisponivel'
 
-    def transferencia_pix(self, valorx, destino):
+    def transferencia_pix(self, valorx, destino, nome):
         if self.pode_sacar(valorx):
             self.saque(valorx)
             destino.deposito(valorx)
+            destino = nome
+            return f'Você fez uma transferencia pix no valor de R${valorx} para {destino}'
         else:
             return 'Seu saldo é insuficiente para realizar essa transação'
-        return f'Você fez uma transferencia pix. {self.nome}'
-
-
-cliente = ContaCorrente('Diego', 123456, 11111111111, 5000, 3000)
-cliente2 = ContaCorrente('Felipe', 1234567, 1893739430, 900, 5000)
-
-print(cliente.transferencia_pix(5000, cliente2))  # Transferindo para a conta2
-print(cliente2.extrato())  # Extrato da conta2
-print(cliente.extrato())  # Extrato da conta2
