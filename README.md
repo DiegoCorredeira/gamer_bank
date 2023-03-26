@@ -38,3 +38,5 @@ Contribuições são bem-vindas! Sinta-se livre para abrir um PR ou criar uma is
 ## Repositório em manutenção
 
 Este repositório está em manutenção e será atualizado em breve. Pedimos desculpas pelo transtorno e agradecemos pela compreensão.
+
+###### Keywords: Python, Banco em Python, Banco, Sistema, Playtoy
