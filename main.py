@@ -1,15 +1,12 @@
 """
 Proximos passos:
-- Fazer busca sobre o cliente pelo CPF
-- Fazer busca pelo cliente pelo número da conta
 - Retornar CPF formatado
 - Adicionar sistema de data no extrato
 - Criar conta poupança onde rende um valor a cada x tempo
 - Utilizar o dot env para algo só para praticar
-- Criar sistema de senha da conta
-- Menu interativo para acesso
-
+- Adicionar mais clientes
 """
+import clientes
 
 
 class ContaCorrente:
@@ -45,11 +42,25 @@ class ContaCorrente:
         else:
             return 'Valor indisponivel'
 
-    def transferencia_pix(self, valorx, destino, nome):
+    def transferencia_pix(self, valorx, destino_cpf):
+        for titular in clientes.titulares.values():
+            if titular['cpf'] == destino_cpf:
+                destinatario = titular['nome']
+                break
+        else:
+            return 'Destinatário não encontrado'
+
         if self.pode_sacar(valorx):
             self.saque(valorx)
-            destino.deposito(valorx)
-            destino = nome
-            return f'Você fez uma transferencia pix no valor de R${valorx} para {destino}'
+            destino = None
+            for conta in clientes.contas:
+                if conta._ContaCorrente__cpf == destino_cpf:
+                    destino = conta
+                    break
+            if destino:
+                destino.deposito(valorx)
+                return f'Você fez uma transferencia pix no valor de R${valorx} para {destinatario}'
+            else:
+                return 'Erro ao localizar a conta do destinatário'
         else:
-            return 'Seu saldo é insuficiente para realizar essa transação'
+            return 'Saldo insuficiente para realizar essa operação'
