@@ -43,7 +43,7 @@ class ContaCorrente:
             return 'Valor indisponivel'
 
     def transferencia_pix(self, valorx, destino_cpf):
-        for titular in clientes.titulares.values():
+        for titular in clientes.titulares_correntistas .values():
             if titular['cpf'] == destino_cpf:
                 destinatario = titular['nome']
                 break
@@ -53,7 +53,7 @@ class ContaCorrente:
         if self.pode_sacar(valorx):
             self.saque(valorx)
             destino = None
-            for conta in clientes.contas:
+            for conta in clientes.contas_correntes:
                 if conta._ContaCorrente__cpf == destino_cpf:
                     destino = conta
                     break
