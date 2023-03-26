@@ -1,52 +1,69 @@
-import clientes
-import contaCorrente
 
-
-def login():
-    autenticacao = input('Informe o seu CPF: ')
-    conta = contaCorrente.busca_cliente_por_cpf(autenticacao)
-    if conta is None:
-        print('Cliente não encontrado em nosso sistema')
-        return None
-    else:
-        print(f'Seja bem vindo, {conta.nome}!')
-        return conta
-
+import criaConta
+import pickle
 
 def consultar_extrato(conta):
     print(f"\n--- Cliente: {conta.nome} ---")
-    print(conta.extrato())
+    print(f'Seu saldo disponivel é: R${conta.saldo}')
 
 
 def efetuar_deposito(conta):
     valor_deposito = float(input('Digite o valor que deseja depositar: '))
     conta.deposito(valor_deposito)
-    print(f'Depósito efetuado com sucesso. Seu novo saldo é: R${conta.saldo:.2f}')
+    print(
+        f'Depósito efetuado com sucesso. Seu novo saldo é: R${conta.saldo:.2f}')
+
+def pode_sacar(conta):
+    # Método que verifica se é possível realizar um saque
+    disponivel = conta.saldo + conta.saldo
 
 
 def efetuar_saque(conta):
     valor_saque = float(input('Digite o valor que deseja sacar: '))
-    resultado_saque = conta.saque(valor_saque)
-    if resultado_saque == 'Saque efetuado com sucesso':
-        print(f'{resultado_saque}. Seu novo saldo é: R${conta.saldo:.2f}')
+    if conta.saldo >= valor_saque:
+        resultado = conta.saldo - valor_saque
+        print(f'Saque no valor de R${valor_saque} realizado. Seu novo saldo é: R${resultado:.2f}')
     else:
-        print(resultado_saque)
+        print('Saldo insuficiente para realizar esse saque.')
 
 
-def efetuar_transferencia(conta):
-    valor_transferencia = float(input('Digite o valor da transferência: '))
-    cpf_destino = input('Digite o CPF do destinatário: ')
-    destinatario = contaCorrente.busca_cliente_por_cpf(cpf_destino)
-    if destinatario is None:
-        print('Destinatário não encontrado')
-        return
-    if conta.pode_sacar(valor_transferencia):
-        resultado_transferencia = conta.transferencia_pix(valor_transferencia, cpf_destino)
-        print(f'Você transferiu R${valor_transferencia} para {destinatario.nome}')
-        print(conta.extrato())
+# def efetuar_transferencia(conta):
+#     valor_transferencia = float(input('Digite o valor da transferência: '))
+#     cpf_destino = input('Digite o CPF do destinatário: ')
+#     destinatario = busca_cliente_por_cpf(cpf_destino)
+#     if destinatario is None:
+#         print('CPF do destinatário não encontrado.')
+#     elif valor_transferencia > conta.saldo + conta.limite:
+#         print('Saldo insuficiente para realizar essa transferência.')
+#     else:
+#         conta.saldo -= valor_transferencia
+#         destinatario.saldo += valor_transferencia
+#         print(f'Transferência no valor de R${valor_transferencia:.2f} realizada com sucesso.')
+
+
+contas_correspondentes = []
+
+
+def busca_cliente_por_cpf(autenticacao):
+    with open('contas_correntes.pkl', 'rb') as f:
+        contas_correntes_salvas = pickle.load(f)
+    # Função que recebe um CPF e retorna a conta corrente correspondente
+    for titular in contas_correntes_salvas:
+        if titular.cpf == autenticacao:
+            contas_correspondentes.append(titular)
+    return contas_correspondentes
+
+
+def login():
+    autenticacao = input('Informe o seu CPF: ')
+    contas_correspondentes = busca_cliente_por_cpf(autenticacao)
+    if not contas_correspondentes:
+        print('Cliente não encontrado em nosso sistema')
+        return None
     else:
-        print('Saldo insuficiente para realizar essa operação')
-        print(conta.extrato())
+        for conta in contas_correspondentes:
+            print(f'Seja bem vindo, {conta.nome}!')
+            return conta
 
 
 def menu():
@@ -54,34 +71,41 @@ def menu():
     print('*   GAMER BANK   *')
     print('******************')
     print('Olá, bem vindo ao Gamer Bank!')
-    print('Antes de continuar, você deve fazer login em sua conta')
-    conta = login()
-    if conta is None:
-        return
+    print('Antes de continuar, você deve escolher uma das opções abaixo.')
     while True:
         opt = input('********************************\n'
-                    '1 - Consultar seu extrato\n'
-                    '2 - Efetuar um deposito\n'
-                    '3 - Efetuar um saque\n'
-                    '4 - Fazer uma transferencia pix\n'
-                    '5 - Sair\n'
+                    '1 - Criar Conta\n'
+                    '2 - Acessar sua conta\n'
                     '********************************\n')
-        try:
-            opt = int(opt)
-        except ValueError:
-            print('Opção inválida. Digite um número entre 1 e 5.')
-            continue
+        opt = int(opt)
         if opt == 1:
-            consultar_extrato(conta)
+            criaConta.criar_conta()
         elif opt == 2:
-            efetuar_deposito(conta)
-        elif opt == 3:
-            efetuar_saque(conta)
-        elif opt == 4:
-            efetuar_transferencia(conta)
-        elif opt == 5:
-            print('Obrigado por usar o Gamer Bank!')
-            break
-        else:
-            print('Opção inválida. Digite um número entre 1 e 5.')
-            continue
+            conta = login()
+            if conta is None:
+                print('Não foi possível fazer login. Tente novamente.')
+                continue
+            else:
+                option_conta = int(input('********************************\n'
+                                         '1 - Consultar seu extrato\n'
+                                         '2 - Efetuar um deposito\n'
+                                         '3 - Efetuar um saque\n'
+                                         '4 - Fazer uma transferencia pix\n'
+                                         '5 - Sair\n'
+                                         '********************************\n'))
+                option_conta = int(option_conta)
+                if option_conta == 1:
+                    consultar_extrato(conta)
+                elif option_conta == 2:
+                    efetuar_deposito(conta)
+                elif option_conta == 3:
+                    efetuar_saque(conta)
+                    print('Obrigado por usar o Gamer Bank!')
+                    break
+                elif option_conta == 4:
+                    efetuar_transferencia(conta)
+                elif option_conta == 5:
+                    break
+                elif option_conta not in [5, 4, 3, 2, 1]:
+                    print('invalido.')
+                    continue
