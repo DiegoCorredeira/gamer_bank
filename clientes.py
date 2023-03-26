@@ -1,4 +1,4 @@
-from main import ContaCorrente
+from contaCorrente import ContaCorrente
 
 titulares_correntistas = {
     'Diego Corredeira': {'nome': 'Diego Corredeira', 'numero': 13221335, 'cpf': '91506736025', 'saldo': 5000,
