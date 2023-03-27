@@ -1,6 +1,14 @@
-
 import criaConta
 import pickle
+
+class ContaCorrente:
+    # Método construtor que inicializa os atributos do objeto
+    def __init__(self, nome, numero, cpf, saldo, limite):
+        self.__nome = nome
+        self.__numero = numero
+        self.__cpf = cpf
+        self.__saldo = saldo
+        self.__limite = limite  # Um valor que o banco te oferece
 
 def consultar_extrato(conta):
     print(f"\n--- Cliente: {conta.nome} ---")
@@ -12,6 +20,7 @@ def efetuar_deposito(conta):
     conta.deposito(valor_deposito)
     print(
         f'Depósito efetuado com sucesso. Seu novo saldo é: R${conta.saldo:.2f}')
+
 
 def pode_sacar(conta):
     # Método que verifica se é possível realizar um saque
@@ -27,18 +36,18 @@ def efetuar_saque(conta):
         print('Saldo insuficiente para realizar esse saque.')
 
 
-# def efetuar_transferencia(conta):
-#     valor_transferencia = float(input('Digite o valor da transferência: '))
-#     cpf_destino = input('Digite o CPF do destinatário: ')
-#     destinatario = busca_cliente_por_cpf(cpf_destino)
-#     if destinatario is None:
-#         print('CPF do destinatário não encontrado.')
-#     elif valor_transferencia > conta.saldo + conta.limite:
-#         print('Saldo insuficiente para realizar essa transferência.')
-#     else:
-#         conta.saldo -= valor_transferencia
-#         destinatario.saldo += valor_transferencia
-#         print(f'Transferência no valor de R${valor_transferencia:.2f} realizada com sucesso.')
+def efetuar_transferencia(conta):
+    valor_transferencia = float(input('Digite o valor da transferência: '))
+    cpf_destino = input('Digite o CPF do destinatário: ')
+    destinatario = busca_cliente_por_cpf(cpf_destino)
+    if destinatario is None:
+        print('CPF do destinatário não encontrado.')
+    elif valor_transferencia > conta.saldo + conta.limite:
+        print('Saldo insuficiente para realizar essa transferência.')
+    else:
+        conta.saldo -= valor_transferencia
+        # destinatario.saldo += valor_transferencia
+        print(f'Transferência no valor de R${valor_transferencia:.2f} realizada com sucesso.')
 
 
 contas_correspondentes = []
@@ -48,9 +57,11 @@ def busca_cliente_por_cpf(autenticacao):
     with open('contas_correntes.pkl', 'rb') as f:
         contas_correntes_salvas = pickle.load(f)
     # Função que recebe um CPF e retorna a conta corrente correspondente
-    for titular in contas_correntes_salvas:
-        if titular.cpf == autenticacao:
-            contas_correspondentes.append(titular)
+    contas_correspondentes = []
+    # Função que recebe um CPF e retorna a conta corrente correspondente
+    for conta in contas_correntes_salvas:
+        if conta.cpf == autenticacao:
+            contas_correspondentes.append(conta)
     return contas_correspondentes
 
 
@@ -61,9 +72,12 @@ def login():
         print('Cliente não encontrado em nosso sistema')
         return None
     else:
-        for conta in contas_correspondentes:
-            print(f'Seja bem vindo, {conta.nome}!')
-            return conta
+        if len(contas_correspondentes) > 1:
+            print('Mais de uma conta encontrada para o CPF informado, por favor entre em contato com o suporte.')
+            return None
+        conta = contas_correspondentes[0]
+        print(f'Seja bem vindo, {conta.nome}!')
+        return conta
 
 
 def menu():
