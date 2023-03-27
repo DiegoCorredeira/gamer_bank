@@ -1,5 +1,7 @@
 from random import randint
 import pickle
+
+
 class ContaCorrente:
     def __init__(self, nome, numero, cpf, saldo, limite=1000.0):
         self.nome = nome
@@ -47,4 +49,5 @@ def criar_conta():
 
     # exibir contas correntes carregadas do arquivo
     for conta in contas_correntes_salvas:
-        print(f"Nome: {conta.nome} | Número da Conta: {conta.numero}| CPF: {conta.cpf} | Saldo: R${conta.saldo:.2f} | Limite: R${conta.limite:.2f}")
+        print(
+            f"Nome: {conta.nome} | Número da Conta: {conta.numero}| CPF: {conta.cpf} | Saldo: R${conta.saldo:.2f} | Limite: R${conta.limite:.2f}")
